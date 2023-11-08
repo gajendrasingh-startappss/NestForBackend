@@ -86,3 +86,7 @@ export type AllConfigType = {
   mail: MailConfig;
   twitter: TwitterConfig;
 };
+
+export type MongodbConfigType = {
+  MDB_URL?: string;
+};

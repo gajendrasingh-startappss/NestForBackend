@@ -25,9 +25,13 @@ import { ForgotModule } from './forgot/forgot.module';
 import { MailModule } from './mail/mail.module';
 import { HomeModule } from './home/home.module';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { AllConfigType } from './config/config.type';
+import { AllConfigType, MongodbConfigType } from './config/config.type';
 import { SessionModule } from './session/session.module';
 import { MailerModule } from './mailer/mailer.module';
+//nikhil
+import mongodbConfig from './config/mongodb.config ';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -43,15 +47,16 @@ import { MailerModule } from './mailer/mailer.module';
         googleConfig,
         twitterConfig,
         appleConfig,
+        mongodbConfig,
       ],
       envFilePath: ['.env'],
     }),
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-      dataSourceFactory: async (options: DataSourceOptions) => {
-        return new DataSource(options).initialize();
-      },
-    }),
+    // TypeOrmModule.forRootAsync({
+    //   useClass: TypeOrmConfigService,
+    //   dataSourceFactory: async (options: DataSourceOptions) => {
+    //     return new DataSource(options).initialize();
+    //   },
+    // }),
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService<AllConfigType>) => ({
         fallbackLanguage: configService.getOrThrow('app.fallbackLanguage', {
@@ -75,18 +80,29 @@ import { MailerModule } from './mailer/mailer.module';
       imports: [ConfigModule],
       inject: [ConfigService],
     }),
-    UsersModule,
-    FilesModule,
-    AuthModule,
-    AuthFacebookModule,
-    AuthGoogleModule,
-    AuthTwitterModule,
-    AuthAppleModule,
-    ForgotModule,
-    SessionModule,
-    MailModule,
-    MailerModule,
+    MongooseModule.forRootAsync({
+      useFactory: (configService: ConfigService<MongodbConfigType>) => ({
+        uri: configService.get('MDB_URL', {
+          infer: true,
+        }),
+      }),
+      imports: [ConfigModule],
+      inject: [ConfigService],
+    }),
+    ProductModule,
+    // UsersModule,
+    // FilesModule,
+    // AuthModule,
+    // AuthFacebookModule,
+    // AuthGoogleModule,
+    // AuthTwitterModule,
+    // AuthAppleModule,
+    // ForgotModule,
+    // SessionModule,
+    // MailModule,
+    // MailerModule,
     HomeModule,
+    // ProductModule,
   ],
 })
 export class AppModule {}

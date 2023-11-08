@@ -12,7 +12,6 @@ import {
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductModule } from './product.module';
 
 @Controller('product')
 export class ProductController {
@@ -39,14 +38,17 @@ export class ProductController {
   @Get('/get')
   async findAll(@Req() req: any, @Res() res: any) {
     try {
-      const getdata = await this.productService.findAll();
+      let getdata = await this.productService.findAll();
       getdata.forEach((curr) => {
         curr['total_delivery_charge'] =
           curr['distance'] * curr['delivery_charge'];
       });
       console.log('Total Delivery Charge: ', getdata);
-      const getdatasend = res.json({
+      // console.log(getdata);
+      res.json({
         data: getdata,
+        // charge: filteredData,
+        message: 'get successfully..!',
       });
     } catch (error) {
       return res.json({
@@ -57,15 +59,54 @@ export class ProductController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(id);
+  async findOne(@Param('id') id: string, @Res() res: any) {
+    try {
+      const findone = await this.productService.findOne(id);
+      res.json({
+        data: findone,
+        message: 'get successfully..!',
+      });
+    } catch (error) {
+      return res.json({
+        error: error,
+        message: 'somethig Went Worng...!',
+      });
+    }
   }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  async update(
+    @Param('id') id: string,
+    @Body() UpdateProductDto: UpdateProductDto,
+    @Res() res: any,
+  ) {
+    try {
+      const updateOne = await this.productService.update(id, UpdateProductDto);
+      res.json({
+        data: updateOne,
+        message: 'updateOne successfully..!',
+      });
+    } catch (error) {
+      console.log(error.message);
+      res.json({
+        error: error,
+        message: 'somethig Went Worng...!',
+      });
+    }
   }
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+  async remove(@Param('id') id: string, @Res() res: any) {
+    try {
+      const removeOne = await this.productService.remove(id);
+      res.json({
+        message: 'removeOne successfully..!',
+      });
+    } catch (error) {
+      res.json({
+        error: error,
+        message: 'somethig Went Worng...!',
+      });
+    }
   }
 }

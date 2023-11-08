@@ -38,19 +38,31 @@ export class ProductService {
     }
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     try {
-      return this.productModel.findById(id);
+      return await this.productModel.findById(id);
     } catch (error) {
       return error;
     }
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    try {
+      return await this.productModel.findByIdAndUpdate(
+        id,
+        { $set: updateProductDto },
+        { new: true },
+      );
+    } catch (error) {
+      return error;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    try {
+      return await this.productModel.findByIdAndDelete(id);
+    } catch (error) {
+      return error;
+    }
   }
 }

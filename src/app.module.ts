@@ -32,6 +32,7 @@ import { MailerModule } from './mailer/mailer.module';
 import mongodbConfig from './config/mongodb.config ';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductModule } from './product/product.module';
+import { getwayModule } from './getway/getwayModule';
 
 @Module({
   imports: [
@@ -102,7 +103,7 @@ import { ProductModule } from './product/product.module';
     // MailModule,
     // MailerModule,
     HomeModule,
-    // ProductModule,
+    getwayModule,
   ],
 })
 export class AppModule {}
